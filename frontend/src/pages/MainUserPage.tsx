@@ -1,26 +1,22 @@
-import React from "react";
-import { useState } from "react";
+import { observer } from "mobx-react-lite";
+import { useStores } from "../mobxStore/storeContext.ts";
 
-/**
- * Main user page component.
- */
-export default function MainUserPage() {
-  const [lightMode, setLightMode] = useState(false);
-  const [search, setSearch] = useState("");
+const MainUserPage = observer(function MainUserPage() {
+  const { ui } = useStores();
 
   return (
-    <div className={lightMode ? "light_mode" : ""}>
+    <div className={ui.lightMode ? "light_mode" : ""}>
       <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-        <button onClick={() => setLightMode((v) => !v)}>
-          Toggle Light Mode
-        </button>
+        <button onClick={ui.toggleLightMode}>Toggle Light Mode</button>
 
         <input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          value={ui.search}
+          onChange={(e) => ui.setSearch(e.target.value)}
           placeholder="Search users..."
         />
       </div>
     </div>
   );
-}
+});
+
+export default MainUserPage;
