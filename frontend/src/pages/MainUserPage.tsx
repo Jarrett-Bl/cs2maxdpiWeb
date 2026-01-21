@@ -38,6 +38,14 @@ const MainUserPage = observer(function MainUserPage() {
 
         </section>
 
+        {/* Top Right */}
+        <section className="rounded-lg border border-zinc-800
+        p-4 md:p-5">
+          <div className="mb-4 flex items-center justify-between">
+            <label htmlFor="shownCalc" className="text-xs leading-5 text-zinc-400">placeholder</label>
+          </div>
+        </section>
+
 
 
         {/* Bottom (spans both columns on md+) */}
