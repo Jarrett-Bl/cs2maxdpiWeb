@@ -1,10 +1,10 @@
 //inputParams
 interface DpiParams {
-  orgSens: number; // Base DPI (original sensitivity)
-  currentDPI: number; // Current DPI setting on the mouse
+  orgSens: number | null; // Base DPI (original sensitivity)
+  currentDpi: number | null; // Current DPI setting on the mouse
   //dpiAcceptableRange: readonly [number, number]; // Acceptable range of DPI values
-  desiredDpi: number;
-  dpiAcceptableInterval: number; // Interval for generating DPI values
+  desiredDpi: number | null; // Desired DPI setting for the mouse
+  dpiAcceptableInterval: number | null; // Interval for generating DPI values
 }
 
 //Output type 
@@ -14,11 +14,26 @@ interface SensDpiPair {
 }
 
 export function generateSensDpiPairs(params: DpiParams): readonly SensDpiPair[] {
-  const { orgSens, currentDPI, desiredDpi, dpiAcceptableInterval } = params;
+  const { orgSens, currentDpi, desiredDpi, dpiAcceptableInterval } = params;
+
+  //should have a zod form
+  if (
+    orgSens === null ||
+    currentDpi === null ||
+    desiredDpi === null ||
+    dpiAcceptableInterval === null
+  ) {
+    throw new Error("Invalid input parameters");
+  }
+
+  if (dpiAcceptableInterval <= 0) {
+    throw new Error("dpiAcceptableInterval must be > 0");
+  }
+
   // Edpi= originalSens * current dpi
-  const edpi = orgSens * currentDPI;
+  const edpi = orgSens * currentDpi;
   // loop starts at current Dpi and ends at desiredDpi + acceptable interval
-  const [loopLimsBegin, loopLimsEnd] = [currentDPI, desiredDpi + (2 * dpiAcceptableInterval)]
+  const [loopLimsBegin, loopLimsEnd] = [currentDpi, desiredDpi + (2 * dpiAcceptableInterval)]
   const results: SensDpiPair[] = [];
 
   for (let dpi = loopLimsBegin; dpi <= loopLimsEnd; dpi += dpiAcceptableInterval) {
