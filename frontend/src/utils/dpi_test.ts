@@ -15,8 +15,19 @@ interface SensDpiPair {
 
 export function generateSensDpiPairs(params: DpiParams): readonly SensDpiPair[] {
   const { orgSens, currentDpi, desiredDpi, dpiAcceptableInterval } = params;
-  if (!orgSens || !currentDpi || !desiredDpi || !dpiAcceptableInterval) {
+
+  //should have a zod form
+  if (
+    orgSens === null ||
+    currentDpi === null ||
+    desiredDpi === null ||
+    dpiAcceptableInterval === null
+  ) {
     throw new Error("Invalid input parameters");
+  }
+
+  if (dpiAcceptableInterval <= 0) {
+    throw new Error("dpiAcceptableInterval must be > 0");
   }
 
   // Edpi= originalSens * current dpi
