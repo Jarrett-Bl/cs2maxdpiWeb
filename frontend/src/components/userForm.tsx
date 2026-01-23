@@ -1,4 +1,4 @@
-// src/components/UserForm.tsx
+
 import React from "react";
 import { observer } from "mobx-react-lite";
 import { useStores } from "../mobxStore/storeContext";
@@ -9,7 +9,6 @@ export const UserForm = observer(function UserForm() {
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        // Optional: native validity gate (required/type="email"/etc.)
         if (!e.currentTarget.checkValidity()) {
             e.currentTarget.reportValidity();
             return;
@@ -18,7 +17,6 @@ export const UserForm = observer(function UserForm() {
         await userForm.submitForm();
     };
 
-    // Helper to parse number inputs safely
     const parseNumberOrNull = (v: string) => {
         if (v.trim() === "") return null;
         const n = Number(v);
@@ -43,9 +41,11 @@ export const UserForm = observer(function UserForm() {
                 <label className="block text-sm font-medium">Current Sens</label>
                 <input
                     name="currentSens"
+                    type="number"
+                    inputMode="decimal"
                     required
-                    value={userForm.currentSens}
-                    onChange={(e) => userForm.setCurrentSens(e.target.value)}
+                    value={userForm.currentSens ?? ""}
+                    onChange={(e) => userForm.setCurrentSens(parseNumberOrNull(e.target.value))}
                     className="w-full rounded border px-3 py-2"
                     placeholder="e.g. 1.25"
                 />
@@ -93,7 +93,7 @@ export const UserForm = observer(function UserForm() {
                 />
             </div>
 
-            {userForm.canSubmit && (
+            {userForm.submitError && (
                 <div role="alert" className="text-sm text-red-600">
                     {userForm.submitError}
                 </div>
