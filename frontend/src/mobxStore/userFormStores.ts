@@ -1,15 +1,6 @@
-// src/mobxStore/userFormStore.ts
 import { makeAutoObservable, runInAction } from "mobx";
 import { generateSensDpiPairs } from "../utils/dpi_test";
-
-// Optional: just for typing/shape (does not "move fields out" at runtime)
-export interface UserFormFields {
-    name: string;
-    currentSens: number | null;
-    currentDpi: number | null;
-    desiredDpi: number | null;
-    dpiInc: number | null;
-}
+import type { UserFormFields } from "../interfaces/formTypes";
 
 export class UserFormStore implements UserFormFields {
     name: string = "";
