@@ -1,4 +1,5 @@
 import { observer } from "mobx-react-lite";
+import { UserForm } from "../components/userForm";
 //import { useStores } from "../mobxStore/storeContext.ts";
 
 const MainUserPage = observer(function MainUserPage() {
@@ -33,6 +34,7 @@ const MainUserPage = observer(function MainUserPage() {
 
           <div className="space-y-3 text-xs leading-5 text-zinc-200">
             <h3 className="mb-1 font-semibold">Your DPI Sensitivity</h3>
+            <UserForm>  </UserForm>
           </div>
 
 
