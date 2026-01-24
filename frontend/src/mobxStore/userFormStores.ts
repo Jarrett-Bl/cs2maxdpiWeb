@@ -1,5 +1,5 @@
 import { makeAutoObservable, runInAction } from "mobx";
-import { generateSensDpiPairs } from "../utils/dpi_test";
+import { generateSensDpiPairs } from "../utils/dpiTest";
 import type { UserFormFields } from "../interfaces/formTypes";
 
 export class UserFormStore implements UserFormFields {
