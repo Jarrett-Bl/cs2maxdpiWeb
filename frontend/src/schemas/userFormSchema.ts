@@ -2,7 +2,7 @@ import { z } from "zod";
 import type { UserFormFields } from "../interfaces/formTypes";
 
 // Helper to preprocess number fields: convert empty strings/null to undefined, then validate
-const preprocessNumber = (errorMessage: string) =>
+export const preprocessNumber = (errorMessage: string) =>
     z.preprocess(
         (val) => {
             if (val === "" || val === null || val === undefined) return undefined;
@@ -15,7 +15,7 @@ const preprocessNumber = (errorMessage: string) =>
             .pipe(z.number().positive({ error: errorMessage }))
     );
 
-const preprocessInteger = (errorMessage: string, positiveMessage: string) =>
+export const preprocessInteger = (errorMessage: string, positiveMessage: string) =>
     z.preprocess(
         (val) => {
             if (val === "" || val === null || val === undefined) return undefined;

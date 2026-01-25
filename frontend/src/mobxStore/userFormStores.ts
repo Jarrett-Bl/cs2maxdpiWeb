@@ -1,5 +1,5 @@
 import { makeAutoObservable, runInAction } from "mobx";
-import { generateSensDpiPairs } from "../utils/dpiTest";
+import { generateSensDpiPairs } from "../utils/dpiCalc";
 import type { UserFormFields } from "../interfaces/formTypes";
 import { userFormSchema, transformStoreValuesToZod } from "../schemas/userFormSchema";
 

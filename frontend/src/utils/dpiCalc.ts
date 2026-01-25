@@ -1,25 +1,17 @@
 //inputParams
 
 import type { DpiParams, SensDpiPair } from "../interfaces/calcTypes";
+import { dpiParamsSchema } from "../schemas/dpiSchema";
 
 
 export function generateSensDpiPairs(params: DpiParams): readonly SensDpiPair[] {
-  const { orgSens, currentDpi, desiredDpi, dpiAcceptableInterval } = params;
-
-  //should have a zod form
-  if (
-    orgSens === null ||
-    currentDpi === null ||
-    desiredDpi === null ||
-    dpiAcceptableInterval === null
-  ) {
-    throw new Error("Invalid input parameters");
+  const result = dpiParamsSchema.safeParse(params);
+  if (!result.success) {
+    const firstIssue = result.error.issues[0];
+    throw new Error(firstIssue?.message || "Invalid input parameters");
   }
 
-  if (dpiAcceptableInterval <= 0) {
-    throw new Error("dpiAcceptableInterval must be > 0");
-  }
-
+  const { orgSens, currentDpi, desiredDpi, dpiAcceptableInterval } = result.data;
   // Edpi= originalSens * current dpi
   const edpi = orgSens * currentDpi;
   // loop starts at current Dpi and ends at desiredDpi + acceptable interval
