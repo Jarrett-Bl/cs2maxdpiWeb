@@ -9,8 +9,8 @@ export const UserForm = observer(function UserForm() {
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        if (!e.currentTarget.checkValidity()) {
-            e.currentTarget.reportValidity();
+        // Validate form using Zod - this will update fieldErrors in the store
+        if (!userForm.validateForm()) {
             return;
         }
 
@@ -29,12 +29,17 @@ export const UserForm = observer(function UserForm() {
                 <label className="block text-sm font-medium">Name</label>
                 <input
                     name="name"
-                    required
                     value={userForm.name}
                     onChange={(e) => userForm.setName(e.target.value)}
-                    className="w-full rounded border px-3 py-2"
+                    onBlur={() => userForm.validateField("name")}
+                    className={`w-full rounded border px-3 py-2 ${
+                        userForm.fieldErrors.name ? "border-red-500" : ""
+                    }`}
                     placeholder="Jarrett"
                 />
+                {userForm.fieldErrors.name && (
+                    <div className="text-sm text-red-600">{userForm.fieldErrors.name}</div>
+                )}
             </div>
 
             <div className="space-y-1">
@@ -43,12 +48,17 @@ export const UserForm = observer(function UserForm() {
                     name="currentSens"
                     type="number"
                     inputMode="decimal"
-                    required
                     value={userForm.currentSens ?? ""}
                     onChange={(e) => userForm.setCurrentSens(parseNumberOrNull(e.target.value))}
-                    className="w-full rounded border px-3 py-2"
+                    onBlur={() => userForm.validateField("currentSens")}
+                    className={`w-full rounded border px-3 py-2 ${
+                        userForm.fieldErrors.currentSens ? "border-red-500" : ""
+                    }`}
                     placeholder="e.g. 1.25"
                 />
+                {userForm.fieldErrors.currentSens && (
+                    <div className="text-sm text-red-600">{userForm.fieldErrors.currentSens}</div>
+                )}
             </div>
 
             <div className="space-y-1">
@@ -57,12 +67,17 @@ export const UserForm = observer(function UserForm() {
                     name="currentDpi"
                     type="number"
                     inputMode="numeric"
-                    required
                     value={userForm.currentDpi ?? ""}
                     onChange={(e) => userForm.setCurrentDpi(parseNumberOrNull(e.target.value))}
-                    className="w-full rounded border px-3 py-2"
+                    onBlur={() => userForm.validateField("currentDpi")}
+                    className={`w-full rounded border px-3 py-2 ${
+                        userForm.fieldErrors.currentDpi ? "border-red-500" : ""
+                    }`}
                     placeholder="e.g. 800"
                 />
+                {userForm.fieldErrors.currentDpi && (
+                    <div className="text-sm text-red-600">{userForm.fieldErrors.currentDpi}</div>
+                )}
             </div>
 
             <div className="space-y-1">
@@ -71,12 +86,17 @@ export const UserForm = observer(function UserForm() {
                     name="desiredDpi"
                     type="number"
                     inputMode="numeric"
-                    required
                     value={userForm.desiredDpi ?? ""}
                     onChange={(e) => userForm.setDesiredDpi(parseNumberOrNull(e.target.value))}
-                    className="w-full rounded border px-3 py-2"
+                    onBlur={() => userForm.validateField("desiredDpi")}
+                    className={`w-full rounded border px-3 py-2 ${
+                        userForm.fieldErrors.desiredDpi ? "border-red-500" : ""
+                    }`}
                     placeholder="e.g. 1600"
                 />
+                {userForm.fieldErrors.desiredDpi && (
+                    <div className="text-sm text-red-600">{userForm.fieldErrors.desiredDpi}</div>
+                )}
             </div>
 
             <div className="space-y-1">
@@ -85,12 +105,17 @@ export const UserForm = observer(function UserForm() {
                     name="dpiInc"
                     type="number"
                     inputMode="numeric"
-                    required
                     value={userForm.dpiInc ?? ""}
                     onChange={(e) => userForm.setDpiInc(parseNumberOrNull(e.target.value))}
-                    className="w-full rounded border px-3 py-2"
+                    onBlur={() => userForm.validateField("dpiInc")}
+                    className={`w-full rounded border px-3 py-2 ${
+                        userForm.fieldErrors.dpiInc ? "border-red-500" : ""
+                    }`}
                     placeholder="e.g. 50"
                 />
+                {userForm.fieldErrors.dpiInc && (
+                    <div className="text-sm text-red-600">{userForm.fieldErrors.dpiInc}</div>
+                )}
             </div>
 
             {userForm.submitError && (

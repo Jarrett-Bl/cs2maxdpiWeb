@@ -1,5 +1,5 @@
 export interface UserFormFields {
-    name: string;
+    name?: string;
     currentSens: number | null;
     currentDpi: number | null;
     desiredDpi: number | null;
