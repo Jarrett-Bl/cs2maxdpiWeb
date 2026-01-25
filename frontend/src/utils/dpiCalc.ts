@@ -5,6 +5,8 @@ import { dpiParamsSchema } from "../schemas/dpiSchema";
 
 
 export function generateSensDpiPairs(params: DpiParams): readonly SensDpiPair[] {
+  // at this point before the safe parse is called I think we know that the params are safe bc the form has zod validation
+  // might delete this after testing
   const result = dpiParamsSchema.safeParse(params);
   if (!result.success) {
     const firstIssue = result.error.issues[0];
