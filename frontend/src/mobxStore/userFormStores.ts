@@ -2,6 +2,8 @@ import { makeAutoObservable, runInAction } from "mobx";
 import { generateSensDpiPairs } from "../utils/dpiCalc";
 import type { UserFormFields } from "../interfaces/formTypes";
 import { userFormSchema, transformStoreValuesToZod } from "../schemas/userFormSchema";
+import type { DpiParamsValues } from "../schemas/dpiSchema";
+import type { SensDpiPair } from "../interfaces/calcTypes";
 
 export class UserFormStore implements UserFormFields {
     name: string = "";
@@ -18,55 +20,92 @@ export class UserFormStore implements UserFormFields {
         makeAutoObservable(this);
     }
 
-    setName = (name: string) => {
-        this.name = name;
-        // Clear error for this field when user starts typing
-        if (this.fieldErrors.name) {
-            this.fieldErrors.name = undefined;
-        }
-    };
-
-    setCurrentSens = (sens: number | null) => {
-        this.currentSens = sens;
-        if (this.fieldErrors.currentSens) {
-            this.fieldErrors.currentSens = undefined;
-        }
-    };
-
-    setCurrentDpi = (dpi: number | null) => {
-        this.currentDpi = dpi;
-        if (this.fieldErrors.currentDpi) {
-            this.fieldErrors.currentDpi = undefined;
-        }
-    };
-
-    setDesiredDpi = (dpi: number | null) => {
-        this.desiredDpi = dpi;
-        if (this.fieldErrors.desiredDpi) {
-            this.fieldErrors.desiredDpi = undefined;
-        }
-    };
-
-    setDpiInc = (dpi: number | null) => {
-        this.dpiInc = dpi;
-        if (this.fieldErrors.dpiInc) {
-            this.fieldErrors.dpiInc = undefined;
-        }
-    };
-
-    validateField = (fieldName: keyof typeof this.fieldErrors): boolean => {
-        const values = transformStoreValuesToZod({
+    // Computed: Returns transformed form values ready for Zod validation
+    get validatedFormValues() {
+        return transformStoreValuesToZod({
             name: this.name,
             currentSens: this.currentSens,
             currentDpi: this.currentDpi,
             desiredDpi: this.desiredDpi,
             dpiInc: this.dpiInc,
         });
+    }
 
-        const result = userFormSchema.safeParse(values);
+    // Computed: Returns validation result
+    get isFormValid() {
+        const result = userFormSchema.safeParse(this.validatedFormValues);
+        return result.success;
+    }
+
+    // Computed: Returns validated DpiParams when form is valid, null otherwise
+    get dpiParams(): DpiParamsValues | null {
+        if (!this.isFormValid) {
+            return null;
+        }
+        const validated = userFormSchema.parse(this.validatedFormValues);
+        return {
+            orgSens: validated.currentSens,
+            currentDpi: validated.currentDpi,
+            desiredDpi: validated.desiredDpi,
+            dpiAcceptableInterval: validated.dpiInc,
+        };
+    }
+
+    // Computed: Automatically calculates sens/dpi pairs when dpiParams is available
+    get sensDpiPairs(): readonly SensDpiPair[] {
+        const params = this.dpiParams;
+        if (!params) {
+            return [];
+        }
+        try {
+            return generateSensDpiPairs(params);
+        } catch (error) {
+            // Return empty array if calculation fails
+            return [];
+        }
+    }
+
+    // Computed: Boolean indicating if calculation results exist
+    get hasCalculationResults(): boolean {
+        return this.sensDpiPairs.length > 0;
+    }
+
+    // Generic setter method to reduce duplication
+    private setField<K extends keyof UserFormFields>(
+        fieldName: K,
+        value: UserFormFields[K]
+    ) {
+        (this[fieldName] as UserFormFields[K]) = value;
+        // Clear error for this field when user starts typing
+        if (this.fieldErrors[fieldName as string]) {
+            this.fieldErrors[fieldName as string] = undefined;
+        }
+    }
+
+    setName = (name: string) => {
+        this.setField("name", name);
+    };
+
+    setCurrentSens = (sens: number | null) => {
+        this.setField("currentSens", sens);
+    };
+
+    setCurrentDpi = (dpi: number | null) => {
+        this.setField("currentDpi", dpi);
+    };
+
+    setDesiredDpi = (dpi: number | null) => {
+        this.setField("desiredDpi", dpi);
+    };
+
+    setDpiInc = (dpi: number | null) => {
+        this.setField("dpiInc", dpi);
+    };
+
+    validateField = (fieldName: keyof typeof this.fieldErrors): boolean => {
+        const result = userFormSchema.safeParse(this.validatedFormValues);
 
         if (!result.success) {
-            //const fieldError = result.error.issues.find((issue) => issue.path.includes(fieldName));
             const fieldError = result.error.issues.find((issue) => issue.path[0] === fieldName);
             this.fieldErrors[fieldName] = fieldError?.message;
             return false;
@@ -77,15 +116,7 @@ export class UserFormStore implements UserFormFields {
     };
 
     validateForm = (): boolean => {
-        const values = transformStoreValuesToZod({
-            name: this.name,
-            currentSens: this.currentSens,
-            currentDpi: this.currentDpi,
-            desiredDpi: this.desiredDpi,
-            dpiInc: this.dpiInc,
-        });
-
-        const result = userFormSchema.safeParse(values);
+        const result = userFormSchema.safeParse(this.validatedFormValues);
 
         if (!result.success) {
             // Update all field errors
@@ -104,15 +135,8 @@ export class UserFormStore implements UserFormFields {
     };
 
     get canSubmit() {
-        // Check if form is valid by checking if there are no field errors
-        // and all required fields have values
-        const hasErrors = Object.values(this.fieldErrors).some((error) => error !== undefined);
-        const hasRequiredFields =
-            this.currentSens !== null &&
-            this.currentDpi !== null &&
-            this.desiredDpi !== null &&
-            this.dpiInc !== null;
-        return !hasErrors && hasRequiredFields && !this.submitLocked;
+        // Use computed isFormValid and check submit lock status
+        return this.isFormValid && !this.submitLocked;
     }
 
     submitForm = async () => {
@@ -127,16 +151,9 @@ export class UserFormStore implements UserFormFields {
         this.submitLocked = true;
 
         try {
-            // At this point, Zod validation has passed, so these values are guaranteed to be numbers
-            const orgSens = this.currentSens!;
-            const currentDpi = this.currentDpi!;
-            const desiredDpi = this.desiredDpi!;
-            const dpiAcceptableInterval = this.dpiInc!;
-
-            const payload = { orgSens, currentDpi, desiredDpi, dpiAcceptableInterval };
-
-            const resp = generateSensDpiPairs(payload);
-            console.log(resp);
+            // Use computed sensDpiPairs which automatically calculates when form is valid
+            const results = this.sensDpiPairs;
+            console.log(results);
 
             runInAction(() => {
                 this.submitLocked = false;
