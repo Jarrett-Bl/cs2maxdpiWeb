@@ -14,7 +14,18 @@ export class UserFormStore implements UserFormFields {
 
     submitLocked: boolean = false;
     submitError: string | null = null;
-    fieldErrors: Record<string, string | undefined> = {};
+    fieldErrors: Partial<Record<keyof UserFormFields, string>> = {};
+    private readonly fieldKeys = [
+        "name",
+        "currentSens",
+        "currentDpi",
+        "desiredDpi",
+        "dpiInc",
+    ] as const;
+
+    private isUserFormField(key: unknown): key is keyof UserFormFields {
+        return typeof key === "string" && this.fieldKeys.includes(key as (typeof this.fieldKeys)[number]);
+    }
 
     constructor() {
         makeAutoObservable(this);
@@ -70,43 +81,48 @@ export class UserFormStore implements UserFormFields {
         return this.sensDpiPairs.length > 0;
     }
 
-    // Generic setter method to reduce duplication
-    private setField<K extends keyof UserFormFields>(
-        fieldName: K,
-        value: UserFormFields[K]
-    ) {
-        (this[fieldName] as UserFormFields[K]) = value;
-        // Clear error for this field when user starts typing
-        if (this.fieldErrors[fieldName as string]) {
-            this.fieldErrors[fieldName as string] = undefined;
-        }
-    }
-
     setName = (name: string) => {
-        this.setField("name", name);
+        this.name = name;
+        if (this.fieldErrors.name) {
+            this.fieldErrors.name = undefined;
+        }
     };
 
     setCurrentSens = (sens: number | null) => {
-        this.setField("currentSens", sens);
+        this.currentSens = sens;
+        if (this.fieldErrors.currentSens) {
+            this.fieldErrors.currentSens = undefined;
+        }
     };
 
     setCurrentDpi = (dpi: number | null) => {
-        this.setField("currentDpi", dpi);
+        this.currentDpi = dpi;
+        if (this.fieldErrors.currentDpi) {
+            this.fieldErrors.currentDpi = undefined;
+        }
     };
 
     setDesiredDpi = (dpi: number | null) => {
-        this.setField("desiredDpi", dpi);
+        this.desiredDpi = dpi;
+        if (this.fieldErrors.desiredDpi) {
+            this.fieldErrors.desiredDpi = undefined;
+        }
     };
 
     setDpiInc = (dpi: number | null) => {
-        this.setField("dpiInc", dpi);
+        this.dpiInc = dpi;
+        if (this.fieldErrors.dpiInc) {
+            this.fieldErrors.dpiInc = undefined;
+        }
     };
 
-    validateField = (fieldName: keyof typeof this.fieldErrors): boolean => {
+    validateField = (fieldName: keyof UserFormFields): boolean => {
         const result = userFormSchema.safeParse(this.validatedFormValues);
 
         if (!result.success) {
-            const fieldError = result.error.issues.find((issue) => issue.path[0] === fieldName);
+            const fieldError = result.error.issues.find(
+                (issue) => this.isUserFormField(issue.path[0]) && issue.path[0] === fieldName
+            );
             this.fieldErrors[fieldName] = fieldError?.message;
             return false;
         }
@@ -120,10 +136,12 @@ export class UserFormStore implements UserFormFields {
 
         if (!result.success) {
             // Update all field errors
-            const newErrors: Record<string, string | undefined> = {};
+            const newErrors: Partial<Record<keyof UserFormFields, string>> = {};
             result.error.issues.forEach((err) => {
-                const fieldName = err.path[0] as string;
-                newErrors[fieldName] = err.message;
+                const fieldName = err.path[0];
+                if (this.isUserFormField(fieldName)) {
+                    newErrors[fieldName] = err.message;
+                }
             });
             this.fieldErrors = newErrors;
             return false;
