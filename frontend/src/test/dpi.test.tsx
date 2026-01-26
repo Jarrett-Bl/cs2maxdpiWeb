@@ -1,70 +1,13 @@
 import { describe, it, expect } from "vitest";
-import type { DpiParams } from "../interfaces/calcTypes";
+import type { DpiParamsValues } from "../schemas/dpiSchema";
 import { generateSensDpiPairs } from "../utils/dpiCalc";
 
 describe("generateSensDpiPairs", () => {
-    it("throws if any required param is null", () => {
-        const params: DpiParams = {
-            orgSens: 1,
-            currentDpi: 800,
-            desiredDpi: 1600,
-            dpiAcceptableInterval: 100,
-        };
-
-        const nullOrgSens = { ...params, orgSens: null };
-        expect(() => generateSensDpiPairs(nullOrgSens)).toThrow();
-
-        const nullCurrentDpi = { ...params, currentDpi: null };
-        expect(() => generateSensDpiPairs(nullCurrentDpi)).toThrow();
-
-        const nullDesiredDpi = { ...params, desiredDpi: null };
-        expect(() => generateSensDpiPairs(nullDesiredDpi)).toThrow();
-
-        const nullInterval = { ...params, dpiAcceptableInterval: null };
-        expect(() => generateSensDpiPairs(nullInterval)).toThrow();
-    });
-
-    it("throws if dpiAcceptableInterval <= 0", () => {
-        const params: DpiParams = {
-            orgSens: 1,
-            currentDpi: 800,
-            desiredDpi: 1600,
-            dpiAcceptableInterval: 0,
-        };
-        expect(() => generateSensDpiPairs(params)).toThrow();
-
-        const invalidInputNeg: DpiParams = { ...params, dpiAcceptableInterval: -100 };
-        expect(() => generateSensDpiPairs(invalidInputNeg)).toThrow();
-    });
-
-    it("throws if values are not positive", () => {
-        const params: DpiParams = {
-            orgSens: 1,
-            currentDpi: 800,
-            desiredDpi: 1600,
-            dpiAcceptableInterval: 100,
-        };
-
-        expect(() => generateSensDpiPairs({ ...params, orgSens: -1 })).toThrow();
-        expect(() => generateSensDpiPairs({ ...params, currentDpi: -800 })).toThrow();
-        expect(() => generateSensDpiPairs({ ...params, desiredDpi: -1600 })).toThrow();
-    });
-
-    it("throws if DPI values are not integers", () => {
-        const params: DpiParams = {
-            orgSens: 1,
-            currentDpi: 800,
-            desiredDpi: 1600,
-            dpiAcceptableInterval: 100,
-        };
-
-        expect(() => generateSensDpiPairs({ ...params, currentDpi: 800.5 })).toThrow();
-        expect(() => generateSensDpiPairs({ ...params, desiredDpi: 1600.7 })).toThrow();
-        expect(() => generateSensDpiPairs({ ...params, dpiAcceptableInterval: 100.3 })).toThrow();
-    });
+    // Note: Validation tests have been removed as validation is now handled
+    // by the MobX store's computed values. The function accepts pre-validated DpiParamsValues.
 
     it("loops bound check", () => {
-        const params: DpiParams = {
+        const params: DpiParamsValues = {
             orgSens: 1,
             currentDpi: 800,
             desiredDpi: 1600,
@@ -81,7 +24,7 @@ describe("generateSensDpiPairs", () => {
     });
 
     it("includes values with <= 2 decimal places and excludes > 2", () => {
-        const params: DpiParams = {
+        const params: DpiParamsValues = {
             orgSens: 1.23,
             currentDpi: 1000,
             desiredDpi: 1500,

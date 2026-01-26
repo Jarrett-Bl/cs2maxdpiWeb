@@ -1,19 +1,9 @@
-//inputParams
+import type { SensDpiPair } from "../interfaces/calcTypes";
+import type { DpiParamsValues } from "../schemas/dpiSchema";
 
-import type { DpiParams, SensDpiPair } from "../interfaces/calcTypes";
-import { dpiParamsSchema } from "../schemas/dpiSchema";
-
-
-export function generateSensDpiPairs(params: DpiParams): readonly SensDpiPair[] {
-  // at this point before the safe parse is called I think we know that the params are safe bc the form has zod validation
-  // might delete this after testing
-  const result = dpiParamsSchema.safeParse(params);
-  if (!result.success) {
-    const firstIssue = result.error.issues[0];
-    throw new Error(firstIssue?.message || "Invalid input parameters");
-  }
-
-  const { orgSens, currentDpi, desiredDpi, dpiAcceptableInterval } = result.data;
+export function generateSensDpiPairs(params: DpiParamsValues): readonly SensDpiPair[] {
+  // Params are pre-validated by computed values in the store, so we can use them directly
+  const { orgSens, currentDpi, desiredDpi, dpiAcceptableInterval } = params;
   // Edpi= originalSens * current dpi
   const edpi = orgSens * currentDpi;
   // loop starts at current Dpi and ends at desiredDpi + acceptable interval
