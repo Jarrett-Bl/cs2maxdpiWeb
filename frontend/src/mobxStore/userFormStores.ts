@@ -15,17 +15,7 @@ export class UserFormStore implements UserFormFields {
     submitLocked: boolean = false;
     submitError: string | null = null;
     fieldErrors: Partial<Record<keyof UserFormFields, string>> = {};
-    private readonly fieldKeys = [
-        "name",
-        "currentSens",
-        "currentDpi",
-        "desiredDpi",
-        "dpiInc",
-    ] as const;
 
-    private isUserFormField(key: unknown): key is keyof UserFormFields {
-        return typeof key === "string" && this.fieldKeys.includes(key as (typeof this.fieldKeys)[number]);
-    }
 
     constructor() {
         makeAutoObservable(this);
@@ -121,7 +111,7 @@ export class UserFormStore implements UserFormFields {
 
         if (!result.success) {
             const fieldError = result.error.issues.find(
-                (issue) => this.isUserFormField(issue.path[0]) && issue.path[0] === fieldName
+                (issue) => issue.path[0] === fieldName
             );
             this.fieldErrors[fieldName] = fieldError?.message;
             return false;
@@ -139,8 +129,8 @@ export class UserFormStore implements UserFormFields {
             const newErrors: Partial<Record<keyof UserFormFields, string>> = {};
             result.error.issues.forEach((err) => {
                 const fieldName = err.path[0];
-                if (this.isUserFormField(fieldName)) {
-                    newErrors[fieldName] = err.message;
+                if (typeof fieldName === "string" && fieldName in this.fieldErrors) {
+                    newErrors[fieldName as keyof UserFormFields] = err.message;
                 }
             });
             this.fieldErrors = newErrors;
