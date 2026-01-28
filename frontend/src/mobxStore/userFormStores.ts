@@ -4,6 +4,7 @@ import type { UserFormFields } from "../interfaces/formTypes";
 import { userFormSchema, transformStoreValuesToZod } from "../schemas/userFormSchema";
 import type { DpiParamsValues } from "../schemas/dpiSchema";
 import type { SensDpiPair } from "../interfaces/calcTypes";
+import { getErrorMessageType } from "../utils/helpers/errorMessHelper";
 
 export class UserFormStore implements UserFormFields {
     name: string = "";
@@ -169,7 +170,7 @@ export class UserFormStore implements UserFormFields {
         } catch (error) {
             runInAction(() => {
                 this.submitLocked = false;
-                this.submitError = error instanceof Error ? error.message : String(error);
+                this.submitError = getErrorMessageType(error);
             });
         }
     };
