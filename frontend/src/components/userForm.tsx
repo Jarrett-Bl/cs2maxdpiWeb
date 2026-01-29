@@ -32,10 +32,9 @@ export const UserForm = observer(function UserForm() {
                     value={userForm.name}
                     onChange={(e) => userForm.setName(e.target.value)}
                     onBlur={() => userForm.validateField("name")}
-                    className={`w-full rounded border px-3 py-2 ${
-                        userForm.fieldErrors.name ? "border-red-500" : ""
-                    }`}
-                    placeholder="Jarrett"
+                    className={`w-full rounded border px-3 py-2 ${userForm.fieldErrors.name ? "border-red-500" : ""
+                        }`}
+                    placeholder="Not Required"
                 />
                 {userForm.fieldErrors.name && (
                     <div className="text-sm text-red-600">{userForm.fieldErrors.name}</div>
@@ -51,9 +50,8 @@ export const UserForm = observer(function UserForm() {
                     value={userForm.currentSens ?? ""}
                     onChange={(e) => userForm.setCurrentSens(parseNumberOrNull(e.target.value))}
                     onBlur={() => userForm.validateField("currentSens")}
-                    className={`w-full rounded border px-3 py-2 ${
-                        userForm.fieldErrors.currentSens ? "border-red-500" : ""
-                    }`}
+                    className={`w-full rounded border px-3 py-2 ${userForm.fieldErrors.currentSens ? "border-red-500" : ""
+                        }`}
                     placeholder="e.g. 1.25"
                 />
                 {userForm.fieldErrors.currentSens && (
@@ -70,9 +68,8 @@ export const UserForm = observer(function UserForm() {
                     value={userForm.currentDpi ?? ""}
                     onChange={(e) => userForm.setCurrentDpi(parseNumberOrNull(e.target.value))}
                     onBlur={() => userForm.validateField("currentDpi")}
-                    className={`w-full rounded border px-3 py-2 ${
-                        userForm.fieldErrors.currentDpi ? "border-red-500" : ""
-                    }`}
+                    className={`w-full rounded border px-3 py-2 ${userForm.fieldErrors.currentDpi ? "border-red-500" : ""
+                        }`}
                     placeholder="e.g. 800"
                 />
                 {userForm.fieldErrors.currentDpi && (
@@ -89,9 +86,8 @@ export const UserForm = observer(function UserForm() {
                     value={userForm.desiredDpi ?? ""}
                     onChange={(e) => userForm.setDesiredDpi(parseNumberOrNull(e.target.value))}
                     onBlur={() => userForm.validateField("desiredDpi")}
-                    className={`w-full rounded border px-3 py-2 ${
-                        userForm.fieldErrors.desiredDpi ? "border-red-500" : ""
-                    }`}
+                    className={`w-full rounded border px-3 py-2 ${userForm.fieldErrors.desiredDpi ? "border-red-500" : ""
+                        }`}
                     placeholder="e.g. 1600"
                 />
                 {userForm.fieldErrors.desiredDpi && (
@@ -108,9 +104,8 @@ export const UserForm = observer(function UserForm() {
                     value={userForm.dpiInc ?? ""}
                     onChange={(e) => userForm.setDpiInc(parseNumberOrNull(e.target.value))}
                     onBlur={() => userForm.validateField("dpiInc")}
-                    className={`w-full rounded border px-3 py-2 ${
-                        userForm.fieldErrors.dpiInc ? "border-red-500" : ""
-                    }`}
+                    className={`w-full rounded border px-3 py-2 ${userForm.fieldErrors.dpiInc ? "border-red-500" : ""
+                        }`}
                     placeholder="e.g. 50"
                 />
                 {userForm.fieldErrors.dpiInc && (
