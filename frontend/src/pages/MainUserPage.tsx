@@ -1,5 +1,6 @@
 import { observer } from "mobx-react-lite";
 import { UserForm } from "../components/userForm";
+import { SensDpiResults } from "../components/SensDpiResults";
 //import { useStores } from "../mobxStore/storeContext.ts";
 
 const MainUserPage = observer(function MainUserPage() {
@@ -41,11 +42,11 @@ const MainUserPage = observer(function MainUserPage() {
         </section>
 
         {/* Top Right */}
-        <section className="rounded-lg border border-zinc-800
-        p-4 md:p-5">
+        <section className="rounded-lg border border-zinc-800 p-4 md:p-5">
           <div className="mb-4 flex items-center justify-between">
-            <label htmlFor="shownCalc" className="text-xs leading-5 text-zinc-400">placeholder</label>
+            <label htmlFor="shownCalc" className="text-xs leading-5 text-zinc-400">DPI Sensitivity Results</label>
           </div>
+          <SensDpiResults />
         </section>
 
 
