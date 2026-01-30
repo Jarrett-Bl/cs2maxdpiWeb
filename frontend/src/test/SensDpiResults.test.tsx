@@ -36,7 +36,6 @@ describe("SensDpiResults", () => {
     it("displays empty state when there are no calculation results", () => {
         const mockRootStore = createMockRootStore([]);
         renderWithStore(mockRootStore);
-
         expect(screen.getByText("Results")).toBeInTheDocument();
         expect(screen.getByText("Submit the form to see results")).toBeInTheDocument();
     });
@@ -50,12 +49,8 @@ describe("SensDpiResults", () => {
 
         const mockRootStore = createMockRootStore(mockPairs);
         renderWithStore(mockRootStore);
-
-        // Check that table headers are present
         expect(screen.getByText("In-Game Sens")).toBeInTheDocument();
         expect(screen.getByText("DPI")).toBeInTheDocument();
-
-        // Check that all pairs are displayed
         expect(screen.getByText("1.00")).toBeInTheDocument();
         expect(screen.getByText("800")).toBeInTheDocument();
         expect(screen.getByText("0.50")).toBeInTheDocument();
@@ -72,7 +67,6 @@ describe("SensDpiResults", () => {
 
         const mockRootStore = createMockRootStore(mockPairs);
         renderWithStore(mockRootStore);
-
         expect(screen.getByText("1.23")).toBeInTheDocument();
         expect(screen.getByText("0.57")).toBeInTheDocument();
     });
@@ -87,17 +81,13 @@ describe("SensDpiResults", () => {
 
         const mockRootStore = createMockRootStore(mockPairs);
         renderWithStore(mockRootStore);
-
-        // Get all table rows (excluding header row)
         const rows = screen.getAllByRole("row");
-        // Should have 1 header row + 4 data rows = 5 total
         expect(rows).toHaveLength(5);
     });
 
     it("handles empty pairs array correctly", () => {
         const mockRootStore = createMockRootStore([]);
         renderWithStore(mockRootStore);
-
         expect(screen.getByText("Submit the form to see results")).toBeInTheDocument();
         expect(screen.queryByText("In-Game Sens")).not.toBeInTheDocument();
     });
