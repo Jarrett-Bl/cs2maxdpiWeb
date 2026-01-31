@@ -1,24 +1,56 @@
+import { useMemo } from "react";
 import { observer } from "mobx-react-lite";
+import { Button } from "@mantine/core";
+import {
+  MantineReactTable,
+  useMantineReactTable,
+  type MRT_ColumnDef,
+} from "mantine-react-table";
 import { UserForm } from "../components/userForm";
 import { SensDpiResults } from "../components/SensDpiResults";
+import { mockCalculations } from "../data/mockCalculations";
+import type { CalculationRow } from "../interfaces/calculationTypes";
 //import { useStores } from "../mobxStore/storeContext.ts";
 
+
+// should move to a seperate file 
 const MainUserPage = observer(function MainUserPage() {
-  //const { ui } = useStores();
+  const columns = useMemo<MRT_ColumnDef<CalculationRow>[]>(
+    () => [
+      { accessorKey: "name", header: "Name" },
+      {
+        accessorKey: "inGameSens",
+        header: "In-Game Sens",
+        Cell: ({ cell }) => (cell.getValue<number>() ?? 0).toFixed(2),
+      },
+      { accessorKey: "dpi", header: "DPI" },
+      { accessorKey: "createdAt", header: "Created" },
+      {
+        id: "actions",
+        header: "",
+        Cell: () => (
+          <Button
+            variant="subtle"
+            color="red"
+            size="xs"
+            type="button"
+            onClick={() => { }}
+          >
+            Delete
+          </Button>
+        ),
+      },
+    ],
+    []
+  );
 
-  // return (
-  //   <div className={ui.lightMode ? "light_mode" : ""}>
-  //     <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-  //       <button onClick={ui.toggleLightMode}>Toggle Light Mode</button>
+  const table = useMantineReactTable({
+    columns,
+    data: mockCalculations,
+    enableGlobalFilter: true,
+  });
 
-  //       <input
-  //         value={ui.search}
-  //         onChange={(e) => ui.setSearch(e.target.value)}
-  //         placeholder="Search users..."
-  //       />
-  //     </div>
-  //   </div>
-  // );
+
 
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-200">
@@ -53,7 +85,10 @@ const MainUserPage = observer(function MainUserPage() {
 
         {/* Bottom (spans both columns on md+) */}
         <section className="rounded-lg border border-zinc-800 p-4 md:col-span-2 md:p-5">
-          {/* Content goes here */}
+          <h3 className="mb-2 text-sm font-semibold text-zinc-50">
+            History of Calculations
+          </h3>
+          <MantineReactTable table={table} />
         </section>
       </main>
     </div>
