@@ -1,4 +1,18 @@
 import './App.css'
+import { Table, TextInput, Button } from '@mantine/core'
+
+/** Row shape for mytable / API calculations – extend when API is connected */
+export interface CalculationRow {
+  id: string
+  name: string
+  inGameSens: number
+  dpi: number
+  createdAt: string
+}
+
+const placeholderCalculations: CalculationRow[] = [
+  { id: '1', name: 'Example', inGameSens: 1.0, dpi: 800, createdAt: '2025-01-28' },
+]
 
 export default function App() {
   return (
@@ -80,28 +94,37 @@ export default function App() {
           </div>
         </section>
 
-        {/* Bottom (spans both columns on md+) */}
+        {/* Bottom (spans both columns on md+) – mytable / API data will go here */}
         <section className="rounded-lg border border-zinc-800 p-4 md:col-span-2 md:p-5">
           <h3 className="mb-2 text-sm font-semibold text-zinc-50">
             History of Calculations
           </h3>
 
-          <input
-            className="mb-3 w-full rounded-md border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-zinc-50 placeholder:text-zinc-500 outline-none focus:border-sky-400"
+          <TextInput
+            className="mb-3"
             placeholder="Search"
+            aria-label="Search calculations"
           />
 
-          <ul className="max-h-52 space-y-2 overflow-y-auto rounded-md border border-zinc-800 p-2 text-xs">
-            <li className="flex items-center justify-between rounded-md border border-zinc-800 bg-zinc-900 px-3 py-2">
-              <span className="text-zinc-200">Example calculation</span>
-              <button
-                type="button"
-                className="rounded-md bg-zinc-800 px-2 py-1 text-[11px] text-zinc-200 hover:bg-zinc-700"
-              >
-                Delete
-              </button>
-            </li>
-          </ul>
+          <Table.ScrollContainer minWidth={400} type="native">
+            <Table
+              data={{
+                head: ['Name', 'In-Game Sens', 'DPI', 'Created', ''],
+                body: placeholderCalculations.map((row) => [
+                  row.name,
+                  row.inGameSens.toFixed(2),
+                  String(row.dpi),
+                  row.createdAt,
+                  <Button key={row.id} variant="subtle" color="red" size="xs" type="button">
+                    Delete
+                  </Button>,
+                ]),
+              }}
+              highlightOnHover
+              withTableBorder
+              withColumnBorders
+            />
+          </Table.ScrollContainer>
 
           <footer className="mt-4 text-center text-xs text-zinc-400">
             © 2025 Jarrett Blackson. All Rights Reserved.
