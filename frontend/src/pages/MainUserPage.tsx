@@ -20,7 +20,7 @@ const MainUserPage = observer(function MainUserPage() {
 
           <div className="space-y-3 text-xs leading-5 text-zinc-200">
             <h3 className="mb-1 font-semibold">Your DPI Sensitivity</h3>
-            <UserForm>  </UserForm>
+            <UserForm />
           </div>
 
 
