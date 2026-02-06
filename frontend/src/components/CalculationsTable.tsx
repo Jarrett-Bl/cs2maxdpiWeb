@@ -16,12 +16,13 @@ export function CalculationsTable({ data }: CalculationsTableProps) {
     () => [
       { accessorKey: "name", header: "Name" },
       {
-        accessorKey: "inGameSens",
+        accessorKey: "currentInGameSens",
         header: "In-Game Sens",
         Cell: ({ cell }) => (cell.getValue<number>() ?? 0).toFixed(2),
       },
-      { accessorKey: "dpi", header: "DPI" },
-      { accessorKey: "createdAt", header: "Created" },
+      { accessorKey: "previousDpi", header: "Previous DPI" },
+      { accessorKey: "desiredDpi", header: "Desired DPI" },
+      { accessorKey: "dpiAcceptableInterval", header: "DPI Interval" },
       {
         id: "actions",
         header: "",
@@ -31,7 +32,7 @@ export function CalculationsTable({ data }: CalculationsTableProps) {
             color="red"
             size="xs"
             type="button"
-            onClick={() => {}}
+            onClick={() => { }}
           >
             Delete
           </Button>
