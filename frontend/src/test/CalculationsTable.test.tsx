@@ -38,33 +38,36 @@ function renderWithProviders(data: CalculationRow[]) {
 describe("CalculationsTable", () => {
     it("renders column headers with non-empty data", () => {
         const data: CalculationRow[] = [
-            { id: "1", name: "Alice", inGameSens: 1.0, dpi: 800, createdAt: "2025-01-28" },
+            { id: "1", name: "Alice", currentInGameSens: 1.0, previousDpi: 800, desiredDpi: 1000, dpiAcceptableInterval: 100, createdAt: "2025-01-28" },
         ];
         renderWithProviders(data);
         expect(screen.getByText("Name")).toBeInTheDocument();
         expect(screen.getByText("In-Game Sens")).toBeInTheDocument();
-        expect(screen.getByText("DPI")).toBeInTheDocument();
-        expect(screen.getByText("Created")).toBeInTheDocument();
+        expect(screen.getByText("Previous DPI")).toBeInTheDocument();
+        expect(screen.getByText("Desired DPI")).toBeInTheDocument();
+        expect(screen.getByText("DPI Interval")).toBeInTheDocument();
     });
 
-    it("renders data rows with name, dpi, and createdAt", () => {
+    it("renders data rows with name, previousDpi, desiredDpi, and dpiAcceptableInterval", () => {
         const data: CalculationRow[] = [
-            { id: "1", name: "Alice", inGameSens: 1.0, dpi: 800, createdAt: "2025-01-28" },
-            { id: "2", name: "Bob", inGameSens: 0.5, dpi: 1600, createdAt: "2025-01-29" },
+            { id: "1", name: "Alice", currentInGameSens: 1.0, previousDpi: 800, desiredDpi: 1000, dpiAcceptableInterval: 100, createdAt: "2025-01-28" },
+            { id: "2", name: "Bob", currentInGameSens: 0.5, previousDpi: 1600, desiredDpi: 2000, dpiAcceptableInterval: 200, createdAt: "2025-01-29" },
         ];
         renderWithProviders(data);
         expect(screen.getByText("Alice")).toBeInTheDocument();
         expect(screen.getByText("Bob")).toBeInTheDocument();
         expect(screen.getByText("800")).toBeInTheDocument();
         expect(screen.getByText("1600")).toBeInTheDocument();
-        expect(screen.getByText("2025-01-28")).toBeInTheDocument();
-        expect(screen.getByText("2025-01-29")).toBeInTheDocument();
+        expect(screen.getByText("1000")).toBeInTheDocument();
+        expect(screen.getByText("2000")).toBeInTheDocument();
+        expect(screen.getAllByText("100").length).toBeGreaterThanOrEqual(1);
+        expect(screen.getAllByText("200").length).toBeGreaterThanOrEqual(1);
     });
 
     it("formats in-game sensitivity to 2 decimal places", () => {
         const data: CalculationRow[] = [
-            { id: "1", name: "Test", inGameSens: 1.234, dpi: 800, createdAt: "2025-01-28" },
-            { id: "2", name: "Test2", inGameSens: 0.5678, dpi: 1600, createdAt: "2025-01-28" },
+            { id: "1", name: "Test", currentInGameSens: 1.234, previousDpi: 800, desiredDpi: 1000, dpiAcceptableInterval: 100, createdAt: "2025-01-28" },
+            { id: "2", name: "Test2", currentInGameSens: 0.5678, previousDpi: 1600, desiredDpi: 2000, dpiAcceptableInterval: 100, createdAt: "2025-01-28" },
         ];
         renderWithProviders(data);
         expect(screen.getByText("1.23")).toBeInTheDocument();
@@ -73,8 +76,8 @@ describe("CalculationsTable", () => {
 
     it("renders a Delete button per row", () => {
         const data: CalculationRow[] = [
-            { id: "1", name: "Row1", inGameSens: 1.0, dpi: 800, createdAt: "2025-01-28" },
-            { id: "2", name: "Row2", inGameSens: 1.0, dpi: 800, createdAt: "2025-01-28" },
+            { id: "1", name: "Row1", currentInGameSens: 1.0, previousDpi: 800, desiredDpi: 1000, dpiAcceptableInterval: 100, createdAt: "2025-01-28" },
+            { id: "2", name: "Row2", currentInGameSens: 1.0, previousDpi: 800, desiredDpi: 1000, dpiAcceptableInterval: 100, createdAt: "2025-01-28" },
         ];
         renderWithProviders(data);
         const deleteButtons = screen.getAllByRole("button", { name: /delete/i });
@@ -85,6 +88,9 @@ describe("CalculationsTable", () => {
         renderWithProviders([]);
         expect(screen.getByText("Name")).toBeInTheDocument();
         expect(screen.getByText("In-Game Sens")).toBeInTheDocument();
+        expect(screen.getByText("Previous DPI")).toBeInTheDocument();
+        expect(screen.getByText("Desired DPI")).toBeInTheDocument();
+        expect(screen.getByText("DPI Interval")).toBeInTheDocument();
         const deleteButtons = screen.queryAllByRole("button", { name: /delete/i });
         expect(deleteButtons).toHaveLength(0);
     });
