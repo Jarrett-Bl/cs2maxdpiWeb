@@ -2,6 +2,7 @@ import { describe, it, expect, beforeAll } from "vitest";
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { MantineProvider } from "@mantine/core";
+import { mantineTheme } from "../theme/mantineTheme";
 import { CalculationsTable } from "../components/CalculationsTable";
 import type { CalculationRow } from "../interfaces/calculationTypes";
 
@@ -28,7 +29,7 @@ beforeAll(() => {
 
 function renderWithProviders(data: CalculationRow[]) {
     return render(
-        <MantineProvider defaultColorScheme="dark">
+        <MantineProvider theme={mantineTheme} defaultColorScheme="dark">
             <CalculationsTable data={data} />
         </MantineProvider>
     );
