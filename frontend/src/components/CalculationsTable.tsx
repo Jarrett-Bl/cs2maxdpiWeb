@@ -9,16 +9,20 @@ import type { CalculationRow } from "../interfaces/calculationTypes";
 
 export interface CalculationsTableProps {
   data: CalculationRow[];
+  onDelete?: (id: string) => void;
 }
 
-export function CalculationsTable({ data }: CalculationsTableProps) {
+export function CalculationsTable({ data, onDelete }: CalculationsTableProps) {
   const columns = useMemo<MRT_ColumnDef<CalculationRow>[]>(
     () => [
       { accessorKey: "name", header: "Name" },
       {
         accessorKey: "currentInGameSens",
         header: "In-Game Sens",
-        Cell: ({ cell }) => (cell.getValue<number>() ?? 0).toFixed(2),
+        Cell: ({ cell }) => {
+          const value = Number(cell.getValue());
+          return Number.isFinite(value) ? value.toFixed(2) : "0.00";
+        },
       },
       { accessorKey: "previousDpi", header: "Previous DPI" },
       { accessorKey: "desiredDpi", header: "Desired DPI" },
@@ -26,20 +30,20 @@ export function CalculationsTable({ data }: CalculationsTableProps) {
       {
         id: "actions",
         header: "",
-        Cell: () => (
+        Cell: ({ row }) => (
           <Button
             variant="subtle"
             color="red"
             size="xs"
             type="button"
-            onClick={() => { }}
+            onClick={() => onDelete?.(row.original.id)}
           >
             Delete
           </Button>
         ),
       },
     ],
-    []
+    [onDelete]
   );
 
   const table = useMantineReactTable({
