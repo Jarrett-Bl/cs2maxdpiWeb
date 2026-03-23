@@ -6,7 +6,11 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
-    "start": "node dist/server.js"
+    "start": "node dist/server.js",
+    "pm2:dev": "pm2 start ts-node -- src/server.ts --name \"cs2-backend-dev\" --watch",
+    "pm2:prod": "pm2 start dist/server.js --name \"cs2-backend\" --watch",
+    "pm2:save": "pm2 save",
+    "pm2:startup": "pm2 startup"
   },
   "dependencies": {
     "dotenv": "^16.4.5",
