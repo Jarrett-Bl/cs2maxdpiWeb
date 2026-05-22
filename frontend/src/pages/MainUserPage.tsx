@@ -1,10 +1,18 @@
+import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
+import { Alert } from "@mantine/core";
 import { UserForm } from "../components/UserForm";
 import { SensDpiResults } from "../components/SensDpiResults";
 import { CalculationsTable } from "../components/CalculationsTable";
-import { mockCalculations } from "../data/mockCalculations";
+import { useStores } from "../mobxStore/storeContext";
 
 const MainUserPage = observer(function MainUserPage() {
+  const { mytable } = useStores();
+
+  useEffect(() => {
+    void mytable.loadAll();
+  }, [mytable]);
+
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-200">
       <h1 className="px-4 pt-6 text-center text-xl font-semibold text-zinc-50">
@@ -41,7 +49,19 @@ const MainUserPage = observer(function MainUserPage() {
           <h3 className="mb-2 text-sm font-semibold text-zinc-50">
             History of Calculations
           </h3>
-          <CalculationsTable data={mockCalculations} />
+          {mytable.error ? (
+            <Alert color="red" title="Could not load history" className="mb-3">
+              {mytable.error}
+            </Alert>
+          ) : null}
+          {mytable.loading && mytable.items.length === 0 ? (
+            <p className="text-sm text-zinc-400">Loading…</p>
+          ) : (
+            <CalculationsTable
+              data={mytable.items}
+              onDelete={(id) => void mytable.removeById(id)}
+            />
+          )}
         </section>
       </main>
     </div>
