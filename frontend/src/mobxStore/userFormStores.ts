@@ -5,6 +5,7 @@ import { userFormSchema, transformStoreValuesToZod } from "../schemas/userFormSc
 import type { DpiParamsValues } from "../schemas/dpiSchema";
 import type { SensDpiPair } from "../interfaces/calcTypes";
 import { getErrorMessageType } from "../utils/helpers/errorMessHelper";
+import type { MytableStore } from "./mytableStore";
 
 export class UserFormStore implements UserFormFields {
     name: string = "";
@@ -17,8 +18,10 @@ export class UserFormStore implements UserFormFields {
     submitError: string | null = null;
     fieldErrors: Partial<Record<keyof UserFormFields, string>> = {};
 
+    private readonly mytable: MytableStore;
 
-    constructor() {
+    constructor(mytable: MytableStore) {
+        this.mytable = mytable;
         makeAutoObservable(this);
     }
 
@@ -160,17 +163,27 @@ export class UserFormStore implements UserFormFields {
         this.submitLocked = true;
 
         try {
-            // Use computed sensDpiPairs which automatically calculates when form is valid
-            const results = this.sensDpiPairs;
-            console.log(results);
+            const validated = userFormSchema.parse(this.validatedFormValues);
+            await this.mytable.addFromCalculation({
+                name: validated.name?.trim() || "Anonymous",
+                currentInGameSens: validated.currentSens,
+                previousDpi: validated.currentDpi,
+                desiredDpi: validated.desiredDpi,
+                dpiAcceptableInterval: validated.dpiInc,
+            });
 
             runInAction(() => {
-                this.submitLocked = false;
+                if (this.mytable.error) {
+                    this.submitError = this.mytable.error;
+                }
             });
         } catch (error) {
             runInAction(() => {
-                this.submitLocked = false;
                 this.submitError = getErrorMessageType(error);
+            });
+        } finally {
+            runInAction(() => {
+                this.submitLocked = false;
             });
         }
     };

@@ -66,7 +66,9 @@ export class MytableStore {
     try {
       const created = await this.mytableService.create(calculationRowToCreateBody(row));
       runInAction(() => {
-        this.items.push(apiRowToCalculationRow(created));
+        const newRow = apiRowToCalculationRow(created);
+        // New array reference so table components (MRT) re-render on POST success
+        this.items = [...this.items, newRow];
         this.loading = false;
       });
     } catch (e) {
