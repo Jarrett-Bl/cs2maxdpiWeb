@@ -175,6 +175,8 @@ export class UserFormStore implements UserFormFields {
             runInAction(() => {
                 if (this.mytable.error) {
                     this.submitError = this.mytable.error;
+                } else {
+                    this.reset();
                 }
             });
         } catch (error) {

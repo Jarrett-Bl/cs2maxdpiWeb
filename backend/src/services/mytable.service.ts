@@ -10,7 +10,7 @@ export interface MyTableRecord {
 }
 
 export async function getAllMyTable(): Promise<MyTableRecord[]> {
-  const result = await pool.query('SELECT * FROM mytable');
+  const result = await pool.query('SELECT * FROM mytable ORDER BY id DESC');
   return result.rows;
 }
 

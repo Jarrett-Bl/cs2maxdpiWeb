@@ -6,6 +6,10 @@ import {
   type MytableService,
 } from "../services/mytableService";
 
+function sortNewestFirst(items: CalculationRow[]): CalculationRow[] {
+  return [...items].sort((a, b) => Number(b.id) - Number(a.id));
+}
+
 export class MytableStore {
   items: CalculationRow[] = [];
   loading = false;
@@ -24,7 +28,7 @@ export class MytableStore {
     try {
       const rows = await this.mytableService.getAll();
       runInAction(() => {
-        this.items = rows.map(apiRowToCalculationRow);
+        this.items = sortNewestFirst(rows.map(apiRowToCalculationRow));
         this.loading = false;
       });
     } catch (e) {
@@ -67,8 +71,8 @@ export class MytableStore {
       const created = await this.mytableService.create(calculationRowToCreateBody(row));
       runInAction(() => {
         const newRow = apiRowToCalculationRow(created);
-        // New array reference so table components (MRT) re-render on POST success
-        this.items = [...this.items, newRow];
+        // Prepend + new array reference so newest row appears first and MRT re-renders
+        this.items = [newRow, ...this.items];
         this.loading = false;
       });
     } catch (e) {
