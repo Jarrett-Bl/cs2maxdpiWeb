@@ -1,0 +1,16 @@
+# 1. Block aggressive AI/Data Scrapers
+User-agent: Bytespider
+User-agent: GPTBot
+User-agent: CCBot
+User-agent: anthropic-ai
+Disallow: /
+
+# 2. Allow major Search Engines to index everything
+User-agent: Googlebot
+User-agent: Bingbot
+User-agent: Applebot
+Allow: /
+
+# 3. Default rule for everyone else
+User-agent: *
+Allow: /
